@@ -1,6 +1,9 @@
 var fs = require("fs");
 var path = require("path");
 
+var features = {};
+var options = {};
+
 var FEATURLETS = module.exports = function(opts) {
 
 	if (!opts.folder) {
@@ -23,22 +26,8 @@ var FEATURLETS = module.exports = function(opts) {
 
 	opts.permissions = opts.permissions || true;
 
-	var features = {};
-
-	fs.readdir(opts.folder, function(err, files) {
-		if (err) {
-			throw err;
-		}
-		else {
-			for (var i = 0; i < files.length; i++) {
-				var stat = fs.statSync(path.join(opts.folder, files[i]));
-				if (stat.isDirectory()) {
-					var featureData = require(path.join(opts.folder, files[i], "feature.json"));
-					features[featureData.name] = featureData;
-				}
-			}
-		}
-	});
+	options = opts;
+	setupFeatures();
 
 	return function * (next) {
 		if (opts.styles.test(this.path)) {
@@ -54,15 +43,41 @@ var FEATURLETS = module.exports = function(opts) {
 	}
 }
 
-var style = function * () {
-	this.body = "style";
+
+var setupFeatures = function() {
+	var files = fs.readdirSync(options.folder);
+
+	for (var i = 0; i < files.length; i++) {
+		var stat = fs.statSync(path.join(options.folder, files[i]));
+		if (stat.isDirectory()) {
+			var featureData = require(path.join(options.folder, files[i], "feature.json"));
+			features[featureData.name] = featureData;
+		}
+	}
 }
 
-var scripts = function * () {
+var getFeatures = function(permission) {
+	if (options.permissions === true) {
+		return Object.keys(features);
+	}
+	else if (options.permissions[permission] !== undefined) {
+		return options.permissions[permission];
+	}
+	else {
+		return [];
+	}
+}
+
+var style = function() {
+	var features = getFeatures(this.permission);
+	this.body = features;
+}
+
+var scripts = function() {
 	console.log("AND HERE");
 	this.body = "scripts";
 }
 
-var routes = function * () {
-	this.body = "routes";
+var routes = function() {
+
 }
