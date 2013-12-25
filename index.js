@@ -1,7 +1,10 @@
 var fs = require("fs");
 var path = require("path");
+var featureSubsetFinder = require("./lib/featureSubsetFinder");
+var makeFeatures = require("./lib/makeFeatures");
+var styleBuilder = require("./lib/styleBuilder");
+var scriptBuilder = require("./lib/scriptBuilder");
 
-var features = {};
 var options = {};
 
 var FEATURLETS = module.exports = function(opts) {
@@ -26,58 +29,48 @@ var FEATURLETS = module.exports = function(opts) {
 
 	opts.permissions = opts.permissions || true;
 
-	options = opts;
-	setupFeatures();
+	var features = makeFeatures(opts.folder);
+	var getFeatureSubset = featureSubsetFinder(opts.permissions, features);
 
-	return function * (next) {
+	var middleware = {};
+
+	middleware.styleist = function * (next) {
 		if (opts.styles.test(this.path)) {
-			return style.apply(this, arguments);
-		}
-		else if (opts.scripts.test(this.path)) {
-			console.log("IN HERE");
-			return scripts.apply(this, arguments);
+			if (styles[this.permission] == undefined) {
+				var subset = getFeatureSubset(this.permission);
+				styles[this.permission] = styleBuilder(subset);
+			}
+
+			this.type = "text/css";
+			this.body = styles[this.permission];
 		}
 		else {
-			return routes.apply(this, arguments);
+			yield next;
 		}
 	}
-}
 
+	middleware.scriptor = function * (next) {
+		if (opts.scripts.test(this.path)) {
+			if (scripts[this.permission] == undefined) {
+				var subset = getFeatureSubset(this.permission);
+				scripts[this.permission] = scriptBuilder(subset);
+			}
 
-var setupFeatures = function() {
-	var files = fs.readdirSync(options.folder);
-
-	for (var i = 0; i < files.length; i++) {
-		var stat = fs.statSync(path.join(options.folder, files[i]));
-		if (stat.isDirectory()) {
-			var featureData = require(path.join(options.folder, files[i], "feature.json"));
-			features[featureData.name] = featureData;
+			this.type = "application/javascript";
+			this.body = scripts[this.permission];
+		}
+		else {
+			yield next;
 		}
 	}
-}
 
-var getFeatures = function(permission) {
-	if (options.permissions === true) {
-		return Object.keys(features);
+	middleware.router = function * (next) {
+		var subset = getFeatureSubset(this.permission);
+
+		var foundRoute = router.call(this, subset);
+
+		if (!foundRoute) {
+			yield next;
+		}
 	}
-	else if (options.permissions[permission] !== undefined) {
-		return options.permissions[permission];
-	}
-	else {
-		return [];
-	}
-}
-
-var style = function() {
-	var features = getFeatures(this.permission);
-	this.body = features;
-}
-
-var scripts = function() {
-	console.log("AND HERE");
-	this.body = "scripts";
-}
-
-var routes = function() {
-
 }
