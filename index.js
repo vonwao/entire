@@ -57,11 +57,13 @@ var FEATURLETS = module.exports = function(opts) {
 
 	var scripts = {};
 	middleware.scriptor = function * (next) {
-		debug(">>> SCRIPTOR")
+		debug(">>> SCRIPTOR");
 		if (opts.scripts.test(this.path)) {
 			if (scripts[this.permission] == undefined) {
+				debug(">>> BUILDING SCRIPT: " + this.permission);
 				var subset = getFeatureSubset(this.permission);
-				scripts[this.permission] = scriptBuilder(subset);
+				scripts[this.permission] = yield scriptBuilder(subset);
+				debug("<<< BUILDING SCRIPT: " + this.permission);
 			}
 
 			this.type = "application/javascript";
