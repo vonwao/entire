@@ -9,7 +9,9 @@
   "dependencies": {
     "should": "~2.1.1",
     "methods": "~0.1.0",
-    "path-to-regexp": "0.0.2"
+    "path-to-regexp": "0.0.2",
+    "koa-compose": "~2.1.0",
+    "koa-route": "~1.0.2"
   },
   "devDependencies": {
     "mocha": "~1.16.2",
