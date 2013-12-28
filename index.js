@@ -40,8 +40,10 @@ var FEATURLETS = module.exports = function(opts) {
 		debug(">>> STYLEIST");
 		if (opts.styles.test(this.path)) {
 			if (styles[this.permission] == undefined) {
+				debug(">>> BUILDING STYLE: " + this.permission);
 				var subset = getFeatureSubset(this.permission);
-				styles[this.permission] = styleBuilder(subset);
+				styles[this.permission] = yield styleBuilder(subset);
+				debug("<<< BUILDING STYLE: " + this.permission);
 			}
 
 			this.type = "text/css";
