@@ -6,6 +6,7 @@ var styleBuilder = require("./lib/styleBuilder");
 var scriptBuilder = require("./lib/scriptBuilder");
 var routeBuilder = require("./lib/routeBuilder");
 var debug = require("debug")("featurlets");
+var reqMore = require("require-more")();
 
 var FEATURLETS = module.exports = function(opts) {
 
@@ -15,6 +16,8 @@ var FEATURLETS = module.exports = function(opts) {
 	else {
 		debug("FEATURE FOLDER", opts.folder);
 	}
+
+	reqMore(opts.folder);
 
 	opts.styles = opts.styles || /styles\.css$/;
 	opts.scripts = opts.scripts || /scripts\.js$/;
