@@ -23,6 +23,12 @@ app.use(entire({
 app.listen(3000);
 ```
 
+## Running
+
+`node --version` -> 0.11.9
+
+`PATH=path/to/custom/modules/folder node --harmony app.js`
+
 ## Features
 
 The main brain of entire are the features. All features must be in a single feature folder which is passed to entire via the folder attribute of the entire opts param.
