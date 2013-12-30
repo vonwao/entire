@@ -46,12 +46,26 @@ A feature must be a folder and that folder must contain a feature.json file. Her
 
 ### Feature: Router
 
-The Router is a node module that exports a function which takes one argument, a router.
+The Router is a node module that exports a function which takes threes arguments, a router, a render engine and a view controller
 
 ```js
-module.exports = function(app){
+module.exports = function(app, render, view){
 	app.get("/user/:id", function(id){
 		this.body = "The user id is: "+id;
+	});
+
+	app.get("/render", function(){
+		this.body = yield render("module/index", {title:"Render"});
+	});
+
+	app.get("/hookAndRender", function(){
+		this.body = yield render("module/index", {title:"Render"});
+	});
+
+	view.hook("module/index", function(locals){
+		if(this.path == "/hookAndRender"){
+			locals.title = "Hook and Render";
+		}
 	});
 }
 ```
