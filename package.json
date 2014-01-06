@@ -14,7 +14,8 @@
     "koa-route": "~1.0.2",
     "co-fs": "~1.1.1",
     "debug": "~0.7.4",
-    "entire-render": "https://github.com/EntireJS/render/tarball/v0.0.1"
+    "entire-render": "https://github.com/EntireJS/render/tarball/v0.0.1",
+    "koa-send": "~1.2.1"
   },
   "devDependencies": {
     "mocha": "~1.16.2",
