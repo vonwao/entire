@@ -18,7 +18,7 @@ app.listen(3000);
 
 Entire is built up of a collection of middleware registered with Koa in one line. Here is an overview.
 
-1. **router**: this will respond to all routes registered in the router components of your modules.
+1. **router**: this will respond to all routes registered via the backend components of included modules.
 2. **scripts server**: this will serve the compiled scripts when /scripts.js or a custom path is requested.
 3. **styles server**: this will serve the result when /scripts.css or a custom path is requested.
 4. **static server**: this will serve files from modules public folder where the first element of the requested path is the modules name and the following elements are the path from the modules public folder. eg. requesting **/base/logo.jpg** will load **entire_modues/base/public/logo.jpg**.
@@ -50,10 +50,12 @@ The `Entire` constructor takes an optional options object argument.
 
 Permissions are essentially named collections of modules. Any dependencies of a module included in a permission set will also be included in said set. Access to these modules is enforced at the middleware level. Here is how the middleware enforces this.
 
-* **router**: routes registered to modules outside the permission set will respond with a 401.
+* **router**: routes registered to modules outside the permission will be skipped.
 * **scripts**: scripts registered to modules outside the permission set will not be included in scripts.js.
 * **styles**: styles registered to modules outside the permission set will not be included in styles.css.
-* **static files**: static files registered to modules outside the permission set will respond with a 404.
+* **static files**: static files registered to modules outside the permission set will be skipped.
+
+Note: If something is skipped, this means the Koa middleware stack continues. Most times this will result in a 404, but it doesn't have to.
 
 ## Request Permission
 

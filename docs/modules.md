@@ -6,11 +6,12 @@
 module/
 	package.json
 		name: module
-		active: true
-		router: ./router.js
-		styles: ./styles.css
-		scripts: ./scripts.js
-		dependencies: ['parent']
+		version: 0.0.0
+		entire
+			backend: ./router.js
+			styles: ./styles.css
+			scripts: ./scripts.js
+			extends: ['parent']
 	views/
 	public/
 	router.js
@@ -27,7 +28,5 @@ module/
 	3. and one or all of the component fields, paths to the component file.
 		* styles
 		* scripts
-		* router
-6. Along with the required fields the package.json file can have
-	1. a "dependencies" array
-	2. an "active" boolean. If this is not provided it will be presumed TRUE.
+		* backend
+6. Along with the required fields the package.json file can have an "extends" array. This clues entire into which other `entire_modules` are required for this `entire_module` to run right.

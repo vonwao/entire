@@ -1,6 +1,6 @@
 {
   "name": "entire",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Wrap fountend and backend features into a module and limit access via permission sets",
   "main": "index.js",
   "directories": {
